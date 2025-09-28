@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "Player's Control",
+    "maps": [
+        {
+            "name": "DiceControl",
+            "id": "3ef94c9b-97e2-463b-ba7c-d5c56ed7744a",
+            "actions": [
+                {
+                    "name": "RollAllDices",
+                    "type": "Button",
+                    "id": "3e3e29ea-baca-4db2-b9f7-3fc62de09d1c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f8d9788e-dc18-4808-9b00-561cae549bb5",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RollAllDices",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
