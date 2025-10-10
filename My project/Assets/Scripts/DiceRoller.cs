@@ -26,7 +26,7 @@ public class DiceRoller : MonoBehaviour
     public GameState gameState;
     
     private Random rng;
-    private List<GameObject> dices = new List<GameObject>();
+    private Dictionary<GameObject, Rigidbody> dices = new Dictionary<GameObject, Rigidbody>();
     
 
     public void Awake()
@@ -38,14 +38,14 @@ public class DiceRoller : MonoBehaviour
     {
         RespawnDices();
         foreach (var dice in dices)
-            RollDice(dice);
+            RollDice(dice.Key);
         
         // буффер, чтобы флаг успел обновить состояние
         Invoke(nameof(NotCalculated), 0.2f);
     }
     private void RespawnDices()
     {
-        foreach (var d in dices)
+        foreach (var d in dices.Keys)
                     Destroy(d);
         dices.Clear();
                 
@@ -53,14 +53,14 @@ public class DiceRoller : MonoBehaviour
         {
             // Кубики выстраиваются в "табличку" по x и z, шагом в 5
             var dice = Instantiate(dicePrefab, new Vector3(i/5 * 5, 1, i%5 * 5), quaternion.identity);
-            dices.Add(dice);
+            dices.Add(dice, dice.GetComponent<Rigidbody>());
         }
     }
     
     private void RollDice(GameObject dice)
     {
         var force = rng.Next(minForce, maxForce);
-        var rb = dice.GetComponent<Rigidbody>();
+        var rb = dices[dice];
         var forceDirection = new Vector3(0, rng.Next(minDistance, maxDistance), 0);
         var torqueDirection = new Vector3(rng.Next(-rotateForce, rotateForce + 1), rng.Next(-rotateForce, rotateForce + 1), rng.Next(-rotateForce, rotateForce + 1));
         rb.AddForce(forceDirection * force, ForceMode.Impulse);
@@ -81,10 +81,10 @@ public class DiceRoller : MonoBehaviour
     }
     private void Update()
     {
-        if (!isCalculated && dices!= null && dices.All(x => IsStop(x)))
+        if (!isCalculated && dices!= null && dices.All(x => IsStop(x.Key)))
         {
             isCalculated = true;
-            score = dices.Sum(x => CountScore(x));
+            score = dices.Sum(x => CountScore(x.Key));
             UpdateGameState();
             needRedraw?.Invoke();
         }
@@ -92,7 +92,7 @@ public class DiceRoller : MonoBehaviour
     
     private bool IsStop(GameObject dice)
     {
-        var rb = dice.GetComponent<Rigidbody>();
+        var rb = dices[dice];
         return rb.linearVelocity == Vector3.zero && rb.angularVelocity == Vector3.zero;
     }
     
